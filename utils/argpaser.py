@@ -1,0 +1,61 @@
+import argparse
+import torch
+import os
+def argparser():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--train_targets", default="Example/1IXCA/1IXCA",type=str,help="File of targets for training")
+    parser.add_argument("--output_dir",default="./example_output",type=str,help="The output directory where the model predictions and checkpoints will be written.")
+    parser.add_argument("--model_dir",default="./model_dir",type=str,
+        help="model directory if load model from checkpoints")
+    parser.add_argument("--msa_transformer_dir",default="./Example",type=str,
+        help="The directory where pre-generated msa embeddings are stored.")
+    parser.add_argument("--max_len", type=int, default=10000, help="Maximum sequnce length, larger proteins are clipped")
+    parser.add_argument("--epochs", default=10000, type=int, help="Total number of training epochs.")
+    parser.add_argument('--num_blocks', type=int, default=50, help='Number of 2d blocks')
+    parser.add_argument('--num_attn_blocks', type=int, default=1, help='Number of 2d blocks for attention')
+    parser.add_argument('--channels', type=int, default=64, help='Resnet channels')
+    parser.add_argument('--dropout', type=float, default=0.2, help='Dropout probability')
+    parser.add_argument('--weight_decay', type=float, default=0.0, help='L2 Regularization')
+    parser.add_argument('--lr', type=float, default=1e-3, help='learning rate')
+    parser.add_argument('--batch', type=int, default=1, help='Batch size for training')
+    parser.add_argument('--num_workers', type=int, default=4, help='Num of workers in dataloader')
+    parser.add_argument('--train_size', type=int, default=0, help='Specify train datapoints to use, 0 means all')
+    parser.add_argument('--model', type=str, default='alphafold', help='Options: resnet | resnest | saa')
+    parser.add_argument('--resnest_blocks', type=int, nargs='+', default=[2,1,1,1], help='ResNeSt blocks, each block has 3 conv')
+    parser.add_argument('--embed', type=str, default='msa_transformer', help='Options: onehot | tape | onehot_tape | msa_transformer')
+    parser.add_argument('--constant_lr_epochs', type=int, default=30, help='Epochs before lr is decreased')
+    parser.add_argument("--af2", default=True, action="store_true", help='whether use af2 embeddings')
+    parser.add_argument('--in_channels_msa', type=int, default=105, help='Input channels for msa features')
+    parser.add_argument('--in_channels_template', type=int, default=64, help='Input channels for template features')
+    parser.add_argument('--in_channels_embed', type=int, default=144, help='Input channels for transformer embedding features')
+    parser.add_argument('--out_channels_dist', type=int, default=20, help='Distance output bins/channels')
+    parser.add_argument('--out_channels_angle', type=int, default=72, help='Backbone angle output bins/channels')
+    parser.add_argument('--out_channels_mu', type=int, default=25, help='Omega output bins/channels')
+    parser.add_argument('--out_channels_theta', type=int, default=25, help='Theta output bins/channels')
+    parser.add_argument('--out_channels_rho', type=int, default=13, help='Ori Phi output bins/channels')
+    parser.add_argument('--out_channels_sce', type=int, default=38, help='Sidechain center output bins/channels')
+    parser.add_argument('--out_channels_no', type=int, default=38, help='H-bond N-O output bins/channels')
+
+    parser.add_argument("--val_epochs",type=int,default=100,help="Save checkpoint every X updates steps.")
+
+    parser.add_argument("--device_id", type=int, default=0, help="cude device id")
+    parser.add_argument("--seed", type=int, default=999, help="random seed for initialization")
+
+    parser.add_argument("--ipa_depth", type=int, default=8, help="depth of ipd block")
+    parser.add_argument("--point_scale", type=int, default=10, help="point scale for translations")
+    parser.add_argument("--dist", default=1, type=int, help='whether to use distance constraint')
+    parser.add_argument("--dist_window", default=1, type=int, help='whether to use distance constraint')
+    parser.add_argument("--domain_relative", default=1, type=int)
+    parser.add_argument("--angle_loss", type=int, default=1)
+    parser.add_argument("--sample_seed", type=int, default=929)
+    parser.add_argument("--dis_clamp", type=int, default=None)
+
+    args = parser.parse_args()
+    os.environ['CUDA_VISIBLE_DEVICES'] = str(args.device_id)
+    args.device_id = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    args.cuda = True if torch.cuda.is_available() else False
+
+    args.n_gpu = 1 
+    
+    # params = vars(args)
+    return args
