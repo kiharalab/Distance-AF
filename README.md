@@ -38,14 +38,14 @@ Chimera (for map visualization): https://www.cgl.ucsf.edu/chimera/download.html
 ### 1. [`Install git`](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) 
 ### 2. Clone the repository in your computer 
 ```
-git clone  https://github.itap.purdue.edu/kiharalab/Distance-AF.git && cd Distance-AF
+git clone  https://github.com/kiharalab/Distance-AF && cd Distance-AF
 ```
 ### 3. Build dependencies.   
 You have two options to install dependency on your computer:
 #### 3.2 Install with anaconda (Recommended)
 ##### 3.2.1 [`install anaconda`](https://www.anaconda.com/download). 
 ##### 3.2.2 Install dependency in command line
-Make sure you are in the CryoREAD directory and then run 
+Make sure you are in the Distance-AF directory and then run 
 ```
 conda env create -f environment.yml
 ```
