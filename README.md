@@ -60,6 +60,6 @@ conda deactivate(If you want to exit)
 ## Usage
    
 ```
-python3 main.py --devide_id=1
+python3 main.py --device_id=1
 ```
 
