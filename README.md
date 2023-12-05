@@ -1,3 +1,4 @@
+
 # Distance-AF
 
 <a href="https://github.com/marktext/marktext/releases/latest">
@@ -17,9 +18,27 @@ License: GPL v3. (If you are interested in a different license, for example, for
 Contact: Daisuke Kihara (dkihara@purdue.edu)
 
 For technical problems or questions, please reach to Yuanyuan Zhang (zhang038@purdue.edu).
+## Citation:
+
+Yuanyuan  Zhang, Zicong  Zhang, Yuki  Kagaya, Genki  Terashi, Bowen  Zhao, Yi  Xiong & Daisuke  Kihara. Distance-AF: Modifying Predicted Protein Structure Models by Alphafold2 with User-Specified Distance Constraints. bioRxiv 2023.12.01.569498; doi:  [https://doi.org/10.1101/2023.12.01.569498](https://doi.org/10.1101/2023.12.01.569498)
+
+```
+@article {Zhang2023.12.01.569498,
+	author = {Yuanyuan Zhang and Zicong Zhang and Yuki Kagaya and Genki Terashi and Bowen Zhao and Yi Xiong and Daisuke Kihara},
+	title = {Distance-AF: Modifying Predicted Protein Structure Models by Alphafold2 with User-Specified Distance Constraints},
+	elocation-id = {2023.12.01.569498},
+	year = {2023},
+	doi = {10.1101/2023.12.01.569498},
+	publisher = {Cold Spring Harbor Laboratory},
+	abstract = {The three-dimensional structure of a protein plays a fundamental role in determining its function and has an essential impact on understanding biological processes. Despite significant progress in protein structure prediction, such as AlphaFold2, challenges remain on those hard targets that Alphafold2 does not often perform well due to the complex folding of protein and a large number of possible conformations. Here we present a modified version of the AlphaFold2, called Distance-AF, which aims to improve the performance of AlphaFold2 by including distance constraints as input information. Distance-AF uses AlphaFold2{\textquoteright}s predicted structure as a starting point and incorporates distance constraints between amino acids to adjust folding of the protein structure until it meets the constraints. Distance-AF can correct the domain orientation on challenging targets, leading to more accurate structures with a lower root mean square deviation (RMSD). The ability of Distance-AF is also useful in fitting protein structures into cryo-electron microscopy maps.Competing Interest StatementThe authors have declared no competing interest.},
+	URL = {https://www.biorxiv.org/content/early/2023/12/04/2023.12.01.569498},
+	eprint = {https://www.biorxiv.org/content/early/2023/12/04/2023.12.01.569498.full.pdf},
+	journal = {bioRxiv}
+} 
+```
+
 
 ## Installation
-<details>
 
 ### System Requirements
 CPU: >=8 cores <br>
@@ -31,8 +50,8 @@ GPU is required for Distance-AF and no CPU version is available for Distance-AF 
 ### Required 
 Python 3 : https://www.python.org/downloads/     
 ### Optional
-Pymol (for map visualization): https://pymol.org/2/    
-Chimera (for map visualization): https://www.cgl.ucsf.edu/chimera/download.html  
+Pymol (for protein structure visualization): https://pymol.org/2/    
+Chimera (for map visualization if running on EMD related target): https://www.cgl.ucsf.edu/chimera/download.html  
 
 ## Environment set up  
 ### 1. [`Install git`](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) 
@@ -58,8 +77,52 @@ conda deactivate(If you want to exit)
 
 
 ## Usage
-   
-```
-python3 main.py --device_id=1
-```
 
+
+### 1. Command parameters
+```
+usage: main.py [-h] [--train_targets=TRAIN_TARGETS] [--output_dir=OUTPUT_DIR] [--msa_transformer_dir=MSA_TRANSFORMER_DIR] [--epochs=EPOCHS] [--device_id=DEVICE_ID]
+
+required arguments:
+  -h, --help               show this help message and exit
+  --train_targets          Target file path, default="Example/1IXCA/1IXCA"
+  --output_dir             The parent dir of output directory you want to save results, default="./example_output".
+  --msa_transformer_dir    The parent dir of input file directory, default="./Example" 
+  --epochs                 The overfitting iterations, default value: 10000
+  --device_id              The GPU id you want to run Distance-AF
+```
+### 2. Run Distance-AF with user specified target
+#### 2.1 Prepare Input files
++ Create a new directory naming in `{pdbid}{chainid}`, like `1IXCA`, all following files are supposed to be in this new created directory.
++ Target file: text file named in {pdbid}{chainid}, for example: `1IXCA`
+  - 1IXCA
++ Fasta file: fasta format file named in `{pdbid}{chainid}.fasta`, for example: `1IXCA.fasta`
+  -  \>1IXC chain A
+MEFRQLKYFIAVAEAGNMAAAAKRLHVSQPPITRQMQALEADLGVVLLERSHRGIELTAAGHAFLEDARRILELAGRSGDRSRAAARGDVGELSVAYFGTPIYRSLPLLLRAFLTSTPTATVSLTHMTKDEQVEGLLAGTIHVGFSRFFPRHPGIEIVNIAQEDLYLAVHRSQSGKFGKTCKLADLRAVELTLFPRGGRPSFADEVIGLFKHAGIEPRIARVVEDATAALALTMAGAASSIVPASVAAIRWPDIAFARIVGTRVKVPISCIFRKEKQPPILARFVEHVRRSAKD
+
++ User specified distance constraint file: text format named in `dist_constraint.txt`, we recommend users to specify as many constraints you have to achieve better performance. In the following example, we use 6 pairs of distance constraints.
+  - `15,221,35.3`: the distance constraint between CA atom of resi 15 and CA atom of resi 221 is 35.3 Å.
+  - `17,232,36.9`: the distance constraint between CA atom of resi 17 and CA atom of resi 232 is 36.9 Å.
+  - `45,150,34.3`: the distance constraint between CA atom of resi 45 and CA atom of resi 150 is 34.3 Å.
+  - `55,190,45.8`: the distance constraint between CA atom of resi 55 and CA atom of resi 190 is 45.8 Å.
+  - `65,266,36.0`: the distance constraint between CA atom of resi 65 and CA atom of resi 266 is 36.0 Å.
+  - `79,126,22.8`: the distance constraint between CA atom of resi 79 and CA atom of resi 126 is 22.8 Å.
++ Initial predicted file in PDB with full length: PDB format, named in `{pdbid}{chainid}_pred_full.pdb` for example: `1IXCA_pred_full.pdb`
+  - We recommend to use the predicted structure file which violates the given distance constraints as initial structure.
++ Domain window info file: text format named in `window.txt`. To achieve domain oriented movement.
+   - 1,87: resi 1 to resi 87 belong to the first domain.
+   - 92,294: resi 92 to resi 294 belong to the second domain.
++ Embedding file: npz format named in `model_1.npz`. The output file after the evoformer layer in [AlphaFold2](https://github.com/google-deepmind/alphafold).
+#### 2.2 Command line
+    python3 main.py [--train_targets=TRAIN_TARGETS] [--output_dir=OUTPUT_DIR] [--msa_transformer_dir=MSA_TRANSFORMER_DIR] [--epochs=EPOCHS] [--device_id=DEVICE_ID]
+
+[train_targets] is the path of the target file.  
+[output_dir] is the parent directory of the output dir you want to save  the results.
+[msa_transformer_dir] is the parent directory of the directory containing input files.  
+[epochs] is the running epochs.  
+[device_id] specifies the gpu used for running Distance-AF.
+#### 2.3 Example command
+
+    python3 main.py --train_dir=Example/1IXCA/1IXCA --output_dir=./example_output --msa_transformer_dir=Example --epochs=10000 --device_id=1
+
+   
