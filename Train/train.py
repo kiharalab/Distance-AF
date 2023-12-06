@@ -12,11 +12,13 @@ from protein_utils import protein
 from utils import rmsd
 import numpy as np
 import functools
+from utils.set_seed import set_seed
 from train_utils.collate import collate_fn
 def train(args):
+    set_seed(args)
     with open(args.train_targets, 'r') as f:
-        target = f.read().splitlines()[0]
-    target_output_dir = os.path.join(args.output_dir,target)
+        target_name = f.read().splitlines()[0]
+    target_output_dir = os.path.join(args.output_dir,target_name)
     if not os.path.exists(target_output_dir):
         os.makedirs(target_output_dir)
     train_dataset = DistAF_Dataset(args)
@@ -167,21 +169,20 @@ def train(args):
                 #save predicted pdb for each evaluted epoch
                 final_pos = atom14_to_atom37(outputs['positions'][-1], batch_gt)
                 final_atom_mask = batch_gt["atom37_atom_exists"]
-
-                initial_pdb = os.path.join(args.msa_transformer_dir, target, f'{target}_pred_full.pdb')
+                initial_pdb = os.path.join(args.msa_transformer_dir, target_name, f'{target_name}_pred_full.pdb')
                 with open(initial_pdb,"r") as f:
                     initial_pdb_str = f.read()
                 prot_initial = protein.from_pdb_string(initial_pdb_str)
                 pred_prot = protein.Protein(
                     aatype=aatype_batch.squeeze(0).cpu().numpy(),
-                    atom_positions=final_pos.squeeze(0).cpu().numpy(),
+                    atom_positions=final_pos.squeeze(0).detach().cpu().numpy(),
                     atom_mask=final_atom_mask.squeeze(0).cpu().numpy(),
                     residue_index=prot_initial.residue_index,
                     b_factors=prot_initial.b_factors,
                 )
                 pred_pdb_lines = protein.to_pdb(pred_prot)
 
-                output_dir_pred = os.path.join(epoch_output_dir, f"{target}_pred_all.pdb")
+                output_dir_pred = os.path.join(epoch_output_dir, f"{target_name}_pred_all.pdb")
                 with open(output_dir_pred, 'w') as f:
                     f.write(pred_pdb_lines)
                 
@@ -195,6 +196,6 @@ def train(args):
                 U = rmsd.kabsch(gt, pred)
                 A = np.dot(gt, U)
                 rmsd_value = rmsd.rmsd(A, pred)
-                with open(os.path.join(epoch_output_dir, f"rmsd.txt")) as file:
+                with open(os.path.join(epoch_output_dir, f"rmsd.txt"), 'w') as file:
                     file.write(f'{rmsd_value}\n')
     return    
