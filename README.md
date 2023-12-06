@@ -112,7 +112,7 @@ MEFRQLKYFIAVAEAGNMAAAAKRLHVSQPPITRQMQALEADLGVVLLERSHRGIELTAAGHAFLEDARRILELAGRSGD
 + Domain window info file: text format named in `window.txt`. To achieve domain oriented movement.
    - 1,87: resi 1 to resi 87 belong to the first domain.
    - 92,294: resi 92 to resi 294 belong to the second domain.
-+ Embedding file: npz format named in `model_1.npz`. The output file after the evoformer layer in [AlphaFold2](https://github.com/google-deepmind/alphafold).
++ Embedding file: npz format named in `model_1.npz`. The output file after the evoformer layer in [AlphaFold2](https://github.com/google-deepmind/alphafold). We will provide further instructions about how to obtain embedding file.
 #### 2.2 Command line
     python3 main.py [--train_targets=TRAIN_TARGETS] [--output_dir=OUTPUT_DIR] [--msa_transformer_dir=MSA_TRANSFORMER_DIR] [--epochs=EPOCHS] [--device_id=DEVICE_ID]
 
