@@ -147,9 +147,12 @@ def train(args):
             if dis_loss > 10.0:
                 fape = 12 * dis_loss * args.dist_weight + (bb_loss+ sc_loss + vio_loss + angle_loss ) * torch.sqrt(min(seq_len, crop_len))
             elif dis_loss > 5.0 and dis_loss < 10.0:
-                fape = 24 * dis_loss * args.dist_weight+ ( bb_loss+ sc_loss + vio_loss+ angle_loss ) * torch.sqrt(min(seq_len, crop_len))
+                fape = 24 * dis_loss * args.dist_weight + ( bb_loss+ sc_loss + vio_loss+ angle_loss ) * torch.sqrt(min(seq_len, crop_len))
             else:
-                fape = 48 * dis_loss * args.dist_weight + (bb_loss + sc_loss + vio_loss+ angle_loss ) * torch.sqrt(min(seq_len, crop_len))
+                if args.loose_dist:
+                    fape = 12 * dis_loss * args.dist_weight + (bb_loss+ sc_loss + vio_loss + angle_loss ) * torch.sqrt(min(seq_len, crop_len))
+                else:
+                    fape = 48 * dis_loss * args.dist_weight + (bb_loss + sc_loss + vio_loss+ angle_loss ) * torch.sqrt(min(seq_len, crop_len))
             loss = fape
             print(f"Epoch:{epoch}, FAPE loss:{loss.item()}")
             loss.backward()
