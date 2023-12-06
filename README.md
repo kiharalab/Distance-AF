@@ -90,8 +90,8 @@ required arguments:
   --msa_transformer_dir    The parent dir of input file directory, default="./Example" 
   --epochs                 The overfitting iterations, default value: 10000
   --device_id              The GPU id you want to run Distance-AF
-  --loose_dist             If loosing the weight of distance_loss near final epochs
-  --dist_weight            The weight for distance loss
+  --loose_dist             If loosing the weight of distance_loss near final epochs, default value:0
+  --dist_weight            The weight for distance loss, default value: 1.0
 ```
 ### 2. Run Distance-AF with user specified target
 #### 2.1 Prepare Input files
@@ -123,6 +123,8 @@ MEFRQLKYFIAVAEAGNMAAAAKRLHVSQPPITRQMQALEADLGVVLLERSHRGIELTAAGHAFLEDARRILELAGRSGD
 [msa_transformer_dir] is the parent directory of the directory containing input files.  
 [epochs] is the running epochs.  
 [device_id] specifies the gpu used for running Distance-AF.
+[loose_dist] specifies the gpu used for running Distance-AF.
+[dist_weight] specifies the weight you want to distance loss, larger value, stricter penalty on distance violation.
 #### 2.3 Example command
 
     python3 main.py --train_dir=Example/1IXCA/1IXCA --output_dir=./example_output --msa_transformer_dir=Example --epochs=10000 --device_id=1 --loose_dist=1 --dist_weight=0.5
