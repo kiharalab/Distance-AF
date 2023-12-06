@@ -3,12 +3,19 @@ import torch
 import os
 def argparser():
     parser = argparse.ArgumentParser()
+    #for input file
+    parser.add_argument("--target_file", default="Example/1IXCA/1IXCA",type=str,help="File of targets for training")
+    parser.add_argument("--emd_file", default="Example/1IXCA/model_1.npz",type=str,help="npz format embedding file path")
+    parser.add_argument("--dist_info", default="Example/1IXCA/dist_constraint.txt",type=str,help="distance constraint file")
+    parser.add_argument("--window_info", default="Example/1IXCA/window.txt",type=str,help="window info to specify different domains")
+    parser.add_argument("--intial_pdb", default="Example/1IXCA/1IXCA_pred_full.pdb",type=str,help="Starting structure for overfitting")
     parser.add_argument("--train_targets", default="Example/1IXCA/1IXCA",type=str,help="File of targets for training")
     parser.add_argument("--output_dir",default="./example_output",type=str,help="The output directory where the model predictions and checkpoints will be written.")
     parser.add_argument("--model_dir",default="./model_dir",type=str,
         help="model directory if load model from checkpoints")
     parser.add_argument("--msa_transformer_dir",default="./Example",type=str,
         help="The directory where pre-generated msa embeddings are stored.")
+    
     parser.add_argument("--max_len", type=int, default=10000, help="Maximum sequnce length, larger proteins are clipped")
     parser.add_argument("--epochs", default=10000, type=int, help="Total number of training epochs.")
     parser.add_argument('--dropout', type=float, default=0.2, help='Dropout probability')
@@ -30,6 +37,8 @@ def argparser():
     parser.add_argument("--angle_loss", type=int, default=1)
     parser.add_argument("--sample_seed", type=int, default=929)
     parser.add_argument("--dis_clamp", type=int, default=None)
+    parser.add_argument("--dist_weight", type=float, default=1.0, help='adjustable for weight of distance loss')
+    parser.add_argument("--loose_dist",type=int, default=0, help="if loose the weight of distance loss when it is smaller than 1")
 
     args = parser.parse_args()
     os.environ['CUDA_VISIBLE_DEVICES'] = str(args.device_id)
