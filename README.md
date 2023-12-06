@@ -123,7 +123,7 @@ MEFRQLKYFIAVAEAGNMAAAAKRLHVSQPPITRQMQALEADLGVVLLERSHRGIELTAAGHAFLEDARRILELAGRSGD
 [msa_transformer_dir] is the parent directory of the directory containing input files.  
 [epochs] is the running epochs.  
 [device_id] specifies the gpu used for running Distance-AF.
-[loose_dist] specifies the gpu used for running Distance-AF.
+[loose_dist] specifies if loosing distance loss weight when distance constraints are roughly satisfied near ending epoch.
 [dist_weight] specifies the weight you want to distance loss, larger value, stricter penalty on distance violation.
 #### 2.3 Example command
 
