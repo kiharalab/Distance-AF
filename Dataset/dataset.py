@@ -9,7 +9,7 @@ from protein_utils import protein, all_atom, data_transforms
 class DistAF_Dataset(Dataset):
 
     def __init__(self, args=None):
-        self.train_file = args.train_targets
+        self.train_file = args.target_file
 
         with open(self.train_file, 'r') as f:
             self.targets = f.read().splitlines()
@@ -49,8 +49,7 @@ class DistAF_Dataset(Dataset):
         resolution = 1
  
         data['resolution'] = torch.tensor([resolution])
-        # TODO: use flexible parameter instead, update: fixed
-        #pdb = "/home/kihara/zhang038/Projects/distance_constraint/casp15/test_3LHCA_reproduce/3LHCA_unrelaxed_finetune.pdb"
+
         initial_pdb = self.initial_pdb
         coords = read_pdb_info(initial_pdb,self.target_seq_len)
         mask = np.ones(self.target_seq_len)
@@ -58,8 +57,7 @@ class DistAF_Dataset(Dataset):
         data['single_representation'] = single
         single_emd = single.unsqueeze(0)
         pair_emd = pair.unsqueeze(0)
-        # TODO: Fix the missing residue issue, update: no fix needed, mask would be all 1  
-        
+   
         data['single_representation'] = single_emd
         data['embed'] = pair_emd
 
@@ -81,7 +79,6 @@ class DistAF_Dataset(Dataset):
         prot_dict = all_atom.make_atom14_positions(prot_dict)
         data['aatype'] = torch.tensor(np.asarray(prot.aatype))
         for key in prot_dict.keys():
-            #print(f'{key}, ', prot_dict[key].shape)
             data[key] = torch.tensor(prot_dict[key][:, ...])
         
         protein_object = protein.from_pdb_string(pdb_str)
@@ -100,9 +97,8 @@ class DistAF_Dataset(Dataset):
             data[key] = protein_object[key][:, ...]
 
         data['seq_length'] = self.target_seq_len
-        if self.args.dist:
-            data['aatype_start'] = 0
-            data['target'] = target
+        
+        data['aatype_start'] = 0
         
         # variables needed in distance af defined below
         if os.path.exists(os.path.join(self.output_dir, f"{target}_constraint.pt")):
