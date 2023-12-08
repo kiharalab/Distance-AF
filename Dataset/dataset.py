@@ -15,7 +15,12 @@ class DistAF_Dataset(Dataset):
             self.targets = f.read().splitlines()
     
         self.max_len = args.max_len
-        self.msa_embedding_dir = args.msa_transformer_dir
+        self.embedding_file = args.emd_file
+        self.fasta_file = args.fasta_file
+        self.initial_pdb = args.initial_pdb
+        self.window_info = args.window_info
+        self.dist_constraint_file = args.dist_info
+        self.output_dir = args.output_dir
         self.args = args
         self.target_seq_len = 0
         self.start_position = 0
@@ -26,17 +31,15 @@ class DistAF_Dataset(Dataset):
 
     def __getitem__(self, index):
         target = self.targets[index]
-        msa_embedding_dir = os.path.join(self.msa_embedding_dir, target)
-        target_seq = get_seq(os.path.join(msa_embedding_dir,target+'.fasta'))
+        target_seq = get_seq(self.fasta_file)
         self.target_seq_len = len(target_seq)
-        self.args.output_dir = os.path.join(self.args.output_dir,target)
+        self.output_dir = os.path.join(self.output_dir,target)
         self.end_position = self.target_seq_len
 
         data = {}
         data["target"] = target
         
-        emd_dir = os.path.join(msa_embedding_dir, f'model_1.npz')
-        emd = np.load(emd_dir)
+        emd = np.load(self.embedding_file)
         pair = emd['pair']
         single = emd['single']
     
@@ -48,7 +51,7 @@ class DistAF_Dataset(Dataset):
         data['resolution'] = torch.tensor([resolution])
         # TODO: use flexible parameter instead, update: fixed
         #pdb = "/home/kihara/zhang038/Projects/distance_constraint/casp15/test_3LHCA_reproduce/3LHCA_unrelaxed_finetune.pdb"
-        initial_pdb = os.path.join(msa_embedding_dir, f'{target}_pred_full.pdb')
+        initial_pdb = self.initial_pdb
         coords = read_pdb_info(initial_pdb,self.target_seq_len)
         mask = np.ones(self.target_seq_len)
         
@@ -102,16 +105,14 @@ class DistAF_Dataset(Dataset):
             data['target'] = target
         
         # variables needed in distance af defined below
-        if os.path.exists(os.path.join(self.args.output_dir, f"{target}_constraint.pt")):
-            data['domain_window'] = torch.load(os.path.join(self.args.output_dir, f"{target}_domain_window.pt"))
-            data['dist_constraint'] = torch.load(os.path.join(self.args.output_dir, f"{target}_constraint.pt"))
+        if os.path.exists(os.path.join(self.output_dir, f"{target}_constraint.pt")):
+            data['domain_window'] = torch.load(os.path.join(self.output_dir, f"{target}_domain_window.pt"))
+            data['dist_constraint'] = torch.load(os.path.join(self.output_dir, f"{target}_constraint.pt"))
         else:
             data['domain_window'] = None
             data['dist_constraint'] = None
-            window_file = os.path.join(msa_embedding_dir, 'window.txt')
-            dist_constraint_file = os.path.join(msa_embedding_dir, 'dist_constraint.txt')
             domain_window = torch.zeros((self.target_seq_len,self.target_seq_len))
-            with open(window_file, 'r') as file:
+            with open(self.window_info, 'r') as file:
                 lines = file.readlines()
             for line in lines:
                 line = line.strip()
@@ -121,7 +122,7 @@ class DistAF_Dataset(Dataset):
             data['domain_window'] = domain_window
 
             dist_constraint = torch.zeros((self.target_seq_len,self.target_seq_len))
-            with open(dist_constraint_file, 'r') as file:
+            with open(self.dist_constraint_file, 'r') as file:
                 lines = file.readlines()
             for line in lines:
                 line = line.strip()
@@ -132,7 +133,7 @@ class DistAF_Dataset(Dataset):
                 dist_constraint[second_resi, first_resi] = dist_cons
 
             data['dist_constraint'] = dist_constraint
-            torch.save(data['dist_constraint'], os.path.join(self.args.output_dir, f"{target}_constraint.pt"))
-            torch.save(data['domain_window'], os.path.join(self.args.output_dir, f"{target}_domain_window.pt")) 
+            torch.save(data['dist_constraint'], os.path.join(self.output_dir, f"{target}_constraint.pt"))
+            torch.save(data['domain_window'], os.path.join(self.output_dir, f"{target}_domain_window.pt")) 
 
         return data
