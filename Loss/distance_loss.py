@@ -6,15 +6,8 @@ def compute_fape_dis(
     pred_frames: T,
     pred_positions: torch.Tensor,
     length_scale: float,
-    target_frames: T,
-    target_positions: torch.Tensor,
     eps=1e-8,
-    dis_gt=None,
-    mask_window=None,
-    fix_window=None,
-    domain_window=None,
-    dis_clamp=None,
-    args=None,
+    dis_gt=None
 ) -> torch.Tensor:
 
     local_pred_pos = pred_frames.invert()[..., None].apply(
@@ -26,9 +19,6 @@ def compute_fape_dis(
 
         error_dist_pair = 0.5 * torch.square((dis_gt[None,None,...] - torch.sqrt(
         torch.sum(local_pred_pos_pair ** 2 , dim=-1) + eps)) * dis_mask[None,None, ...])
-
-        if dis_clamp is not None:
-            error_dist_pair = torch.clamp(error_dist_pair, min=0, max=dis_clamp)
 
         error_dist_pair = error_dist_pair / length_scale
         
@@ -120,9 +110,7 @@ def compute_fape(
     l1_clamp_distance: Optional[float] = None,
     eps=1e-8,
     dis_gt=None,
-    mask_window=None,
-    fix_window=None,
-    domain_window=None
+    mask_window=None
 ) -> torch.Tensor:
     # [*, N_frames, N_pts, 3]
     local_pred_pos = pred_frames.invert()[..., None].apply(

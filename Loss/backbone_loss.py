@@ -13,10 +13,6 @@ def backbone_loss(
     eps: float = 1e-4,
     dis_gt = None,
     mask_window=None,
-    fix_window=None,
-    domain_window=None,
-    dis_clamp=None,
-    args=None,
     **kwargs,
 ) -> torch.Tensor:
     pred_aff = T.from_tensor(traj)
@@ -32,9 +28,7 @@ def backbone_loss(
         length_scale=loss_unit_distance,
         eps=eps,
         dis_gt=dis_gt,
-        mask_window=mask_window,
-        fix_window=fix_window,
-        domain_window=domain_window
+        mask_window=mask_window
     )
     if use_clamped_fape is not None:
         unclamped_fape_loss = compute_fape(
@@ -48,9 +42,7 @@ def backbone_loss(
             length_scale=loss_unit_distance,
             eps=eps,
             dis_gt=dis_gt,
-            mask_window=mask_window,
-            fix_window=fix_window,
-            domain_window=domain_window
+            mask_window=mask_window
         )
 
         fape_loss = fape_loss * use_clamped_fape + unclamped_fape_loss * (
@@ -60,22 +52,11 @@ def backbone_loss(
     # Average over the batch dimension
     fape_loss = torch.mean(fape_loss)
     # return fape_loss
-    if dis_gt != None:
-        dis_loss = compute_fape_dis(
-            pred_frames=pred_aff,
-            pred_positions=pred_aff.get_trans(),
-            length_scale=loss_unit_distance,
-            target_frames=gt_aff[None],
-            target_positions=gt_aff[None].get_trans(),
-            eps=eps,
-            dis_gt=dis_gt,
-            mask_window=mask_window,
-            fix_window=fix_window,
-            domain_window=domain_window,
-            dis_clamp=dis_clamp,
-            args=args)
-    else:
-        dis_loss = 0.0
-
+    dis_loss = compute_fape_dis(
+        pred_frames=pred_aff,
+        pred_positions=pred_aff.get_trans(),
+        length_scale=loss_unit_distance,
+        eps=eps,
+        dis_gt=dis_gt)
 
     return fape_loss, dis_loss
