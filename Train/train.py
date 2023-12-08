@@ -166,6 +166,8 @@ def train(args):
                     'epoch': epoch,
                     'rng_state': torch.get_rng_state()}
                 torch.save(checkpoint, os.path.join(epoch_output_dir, "checkpoint.pth"))
+                torch.save(model.state_dict(), os.path.join(epoch_output_dir, "model_state_dict.pt"))
+                torch.save(optimizer.state_dict(), os.path.join(epoch_output_dir, "optimizer.pt"))
                 #save predicted pdb for each evaluted epoch
                 final_pos = atom14_to_atom37(outputs['positions'][-1], batch_gt)
                 final_atom_mask = batch_gt["atom37_atom_exists"]
