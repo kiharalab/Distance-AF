@@ -16,7 +16,7 @@ from utils.set_seed import set_seed
 from train_utils.collate import collate_fn
 def train(args):
     set_seed(args)
-    with open(args.train_targets, 'r') as f:
+    with open(args.target_file, 'r') as f:
         target_name = f.read().splitlines()[0]
     target_output_dir = os.path.join(args.output_dir,target_name)
     if not os.path.exists(target_output_dir):
@@ -103,10 +103,7 @@ def train(args):
                 backbone_affine_mask=batch_gt_frames['rigidgroups_gt_exists'][..., 0],
                 traj=pred_frames,
                 dis_gt=dist_constraint, 
-                mask_window=domain_window,
-                domain_window=domain_window,
-                dis_clamp=args.dis_clamp,
-                args=args
+                mask_window=domain_window
             )
 
             rename =compute_renamed_ground_truth(batch_gt, outputs['positions'][-1])
@@ -172,7 +169,7 @@ def train(args):
                 #save predicted pdb for each evaluted epoch
                 final_pos = atom14_to_atom37(outputs['positions'][-1], batch_gt)
                 final_atom_mask = batch_gt["atom37_atom_exists"]
-                initial_pdb = os.path.join(args.msa_transformer_dir, target_name, f'{target_name}_pred_full.pdb')
+                initial_pdb = args.initial_pdb
                 with open(initial_pdb,"r") as f:
                     initial_pdb_str = f.read()
                 prot_initial = protein.from_pdb_string(initial_pdb_str)
@@ -185,7 +182,7 @@ def train(args):
                 )
                 pred_pdb_lines = protein.to_pdb(pred_prot)
 
-                output_dir_pred = os.path.join(epoch_output_dir, f"{target_name}_pred_all.pdb")
+                output_dir_pred = os.path.join(epoch_output_dir, f"{target_name}_pred_epoch{epoch}.pdb")
                 with open(output_dir_pred, 'w') as f:
                     f.write(pred_pdb_lines)
                 
