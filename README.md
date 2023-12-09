@@ -95,8 +95,8 @@ required arguments:
   --output_dir             The output directory you want to save results, default="./example_output".
   --epochs                 The overfitting iterations, default value: 10000
   --device_id              The GPU id you want to run Distance-AF
-  --loose_dist             If loosing the weight of distance_loss near final epochs, default value:0
-  --dist_weight            The weight for distance loss, default value: 1.0
+  --loose_dist             If loosing the weight of distance_loss near final epochs, default value:1
+  --dist_weight            The weight for distance loss, default value: 0.5
 ```
 ### 2. Run Distance-AF with user specified target
 #### 2.1 Prepare Input files
