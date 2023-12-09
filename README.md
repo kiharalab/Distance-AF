@@ -100,39 +100,39 @@ required arguments:
 ```
 ### 2. Run Distance-AF with user specified target
 #### 2.1 Prepare Input files
-+ Target file: text file, for example: `1IXCA`
-  - 1IXCA
-+ Fasta file: fasta format file, for example: `1IXCA.fasta`
-  -  \>1IXC chain A
+ + Target file: text file, for example: `1IXCA`
+ + 1IXCA
+ + Fasta file: fasta format file, for example: `1IXCA.fasta`
+ +  \>1IXC chain A
 MEFRQLKYFIAVAEAGNMAAAAKRLHVSQPPITRQMQALEADLGVVLLERSHRGIELTAAGHAFLEDARRILELAGRSGDRSRAAARGDVGELSVAYFGTPIYRSLPLLLRAFLTSTPTATVSLTHMTKDEQVEGLLAGTIHVGFSRFFPRHPGIEIVNIAQEDLYLAVHRSQSGKFGKTCKLADLRAVELTLFPRGGRPSFADEVIGLFKHAGIEPRIARVVEDATAALALTMAGAASSIVPASVAAIRWPDIAFARIVGTRVKVPISCIFRKEKQPPILARFVEHVRRSAKD
 
-+ User specified distance constraint file: text format , we recommend users to specify as many constraints you have to achieve better performance. In the following example, we use 6 pairs of distance constraints.
-  - `15,221,35.3`: the distance constraint between CA atom of resi 15 and CA atom of resi 221 is 35.3 Å.
-  - `17,232,36.9`: the distance constraint between CA atom of resi 17 and CA atom of resi 232 is 36.9 Å.
-  - `45,150,34.3`: the distance constraint between CA atom of resi 45 and CA atom of resi 150 is 34.3 Å.
-  - `55,190,45.8`: the distance constraint between CA atom of resi 55 and CA atom of resi 190 is 45.8 Å.
-  - `65,266,36.0`: the distance constraint between CA atom of resi 65 and CA atom of resi 266 is 36.0 Å.
-  - `79,126,22.8`: the distance constraint between CA atom of resi 79 and CA atom of resi 126 is 22.8 Å.
-+ Initial predicted file in PDB with full length: PDB format, for example: `1IXCA_pred_full.pdb`
-  - We recommend to use the predicted structure file which violates the given distance constraints as initial structure.
-+ Domain window info file: text format to specify distince domains. To achieve domain oriented movement.
-   - 1,87: resi 1 to resi 87 belong to the first domain.
-   - 92,294: resi 92 to resi 294 belong to the second domain.
-+ Embedding file: npz format . The output file after the evoformer layer in [AlphaFold2](https://github.com/google-deepmind/alphafold). We will provide further instructions about how to obtain embedding file.
+ + User specified distance constraint file: text format , we recommend users to specify as many constraints you have to achieve better performance. In the following example, we use 6 pairs of distance constraints.
+ + `15,221,35.3`: the distance constraint between CA atom of resi 15 and CA atom of resi 221 is 35.3 Å.
+ + `17,232,36.9`: the distance constraint between CA atom of resi 17 and CA atom of resi 232 is 36.9 Å.
+ + `45,150,34.3`: the distance constraint between CA atom of resi 45 and CA atom of resi 150 is 34.3 Å.
+ + `55,190,45.8`: the distance constraint between CA atom of resi 55 and CA atom of resi 190 is 45.8 Å.
+ + `65,266,36.0`: the distance constraint between CA atom of resi 65 and CA atom of resi 266 is 36.0 Å.
+ + `79,126,22.8`: the distance constraint between CA atom of resi 79 and CA atom of resi 126 is 22.8 Å.
+ + Initial predicted file in PDB with full length: PDB format, for example: `1IXCA_pred_full.pdb`
+ + We recommend to use the predicted structure file which violates the given distance constraints as initial structure.
+ + Domain window info file: text format to specify distince domains. To achieve domain oriented movement.
+ + 1,87: resi 1 to resi 87 belong to the first domain.
+ + 92,294: resi 92 to resi 294 belong to the second domain.
+ + Embedding file: npz format . The output file after the evoformer layer in [AlphaFold2](https://github.com/google-deepmind/alphafold). We will provide further instructions about how to obtain embedding file.
 #### 2.2 Command line
     python3 main.py [--target_file=TARGET_FILE] [--emd_file=EMD_FILE] [--dist_info=DIST_INFO] [--window_info=WINDOW_INFO] [--initial_pdb=INITIAL_PDB] [--fasta_file=FASTA_FILE] [--output_dir=OUTPUT_DIR] [--epochs=EPOCHS] [--device_id=DEVICE_ID]
 
-[target_file] is the path of the target file.  
-[emd_file] is the embedding file, formatted in npz, for your own target.
-[dist_info] is the text file with the distance constraints you want to applied.
-[window_info] is the text file specifying residues belonging to individual domains.
-[initial_pdb] is the initial structure you want to optimize by Distance-AF.
-[fasta_file] is the fasta file for the target.
-[output_dir] is the parent directory of the output dir you want to save  the results.
-[epochs] is the running epochs.  
-[device_id] specifies the gpu used for running Distance-AF.
-[loose_dist] specifies if loosing distance loss weight when distance constraints are roughly satisfied near ending epoch.
-[dist_weight] specifies the weight you want to distance loss, larger value, stricter penalty on distance violation.
+ + [target_file] is the path of the target file.  
+ + [emd_file] is the embedding file, formatted in npz, for your own target.  
+ + [dist_info] is the text file with the distance constraints you want to applied.  
+ + [window_info] is the text file specifying residues belonging to individual domains.  
+ + [initial_pdb] is the initial structure you want to optimize by Distance-AF.  
+ + [fasta_file] is the fasta file for the target.  
+ + [output_dir] is the parent directory of the output dir you want to save  the results.  
+ + [epochs] is the running epochs.  
+ + [device_id] specifies the gpu used for running Distance-AF.  
+ + [loose_dist] specifies if loosing distance loss weight when distance constraints are roughly satisfied near ending epoch.  
+ + [dist_weight] specifies the weight you want to distance loss, larger value, stricter penalty on distance violation.  
 #### 2.3 Example command
 
     python3 main.py --target_file=Example/1IXCA/1IXCA --emd_file=Example/1IXCA/model_1.npz --dist_info=Example/1IXCA/dist_constraint.txt --window_info=Example/1IXCA/window.txt --initial_pdb=Example/1IXCA/1IXCA_pred_full.pdb --fasta_file=Example/1IXCA/1IXCA.fasta --output_dir=./example_output --model_dir=./model_dir --dist_weight=0.5 --loose_dist=1 --device_id=1
