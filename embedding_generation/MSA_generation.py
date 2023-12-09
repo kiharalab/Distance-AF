@@ -2,10 +2,8 @@ from os.path import join,exists
 import os
 from tqdm import tqdm
 import sys
+from utils.creat_dir import create_dir
 
-def create_dir(dir):
-	if not os.path.exists(dir):
-		os.makedirs(dir)
 
 def msa_generation(hhblits_bin_path, hhsearch_bin_path,db_dir,fasta_path,output_dir):
     #Check path and create necessary directory

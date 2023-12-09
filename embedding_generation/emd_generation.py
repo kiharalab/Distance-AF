@@ -35,7 +35,6 @@ from AF2_pipeline.tools import hhsearch
 from AF2_pipeline.tools import hmmsearch
 from AF2_pipeline.model import config
 from AF2_pipeline.model import model
-from AF2_pipeline.relax import relax
 import numpy as np
 
 from AF2_pipeline.model import data
