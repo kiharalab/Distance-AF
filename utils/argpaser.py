@@ -3,7 +3,6 @@ import torch
 import os
 def argparser():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--mode', default=2, type=int, help="Running mode, 1: Embedding generation; 2: Structure prediction")
     #for input file
     parser.add_argument("--target_file", default="Example/1IXCA/1IXCA",type=str,help="File of targets for training")
     parser.add_argument("--emd_file", default="Example/1IXCA/model_1.npz",type=str,help="npz format embedding file path")
@@ -34,8 +33,8 @@ def argparser():
     parser.add_argument("--dist_window", default=1, type=int, help='whether to use distance constraint')
     parser.add_argument("--domain_relative", default=1, type=int)
     parser.add_argument("--angle_loss", type=int, default=1)
-    parser.add_argument("--dist_weight", type=float, default=1.0, help='adjustable for weight of distance loss')
-    parser.add_argument("--loose_dist",type=int, default=0, help="if loose the weight of distance loss when it is smaller than 1")
+    parser.add_argument("--dist_weight", type=float, default=0.5, help='adjustable for weight of distance loss')
+    parser.add_argument("--loose_dist",type=int, default=1, help="if loose the weight of distance loss when it is smaller than 1")
 
     args = parser.parse_args()
     os.environ['CUDA_VISIBLE_DEVICES'] = str(args.device_id)
