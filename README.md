@@ -1,4 +1,5 @@
 
+
 # Distance-AF
 
 <a href="https://github.com/marktext/marktext/releases/latest">
@@ -81,13 +82,17 @@ conda deactivate(If you want to exit)
 
 ### 1. Command parameters
 ```
-usage: main.py [-h] [--train_targets=TRAIN_TARGETS] [--output_dir=OUTPUT_DIR] [--msa_transformer_dir=MSA_TRANSFORMER_DIR] [--epochs=EPOCHS] [--device_id=DEVICE_ID]
+usage: main.py [-h] [--target_file=TARGET_FILE] [--emd_file=EMD_FILE] [--dist_info=DIST_INFO] [--window_info=WINDOW_INFO] [--initial_pdb=INITIAL_PDB] [--fasta_file=FASTA_FILE] [--output_dir=OUTPUT_DIR] [--epochs=EPOCHS] [--device_id=DEVICE_ID]
 
 required arguments:
   -h, --help               show this help message and exit
-  --train_targets          Target file path, default="Example/1IXCA/1IXCA"
-  --output_dir             The parent dir of output directory you want to save results, default="./example_output".
-  --msa_transformer_dir    The parent dir of input file directory, default="./Example" 
+  --target_file            Target file path, default="Example/1IXCA/1IXCA"
+  --emd_file               Embedding file path, npz file, default="Example/1IXCA/model_1.npz"
+  --dist_info              Distance constraint file, default="Example/1IXCA/dist_constraint.txt"
+  --window_info            Domain window file, default="Example/1IXCA/window.txt"
+  --initial_pdb            The PDB file of structure you want to run Distance-AF as start point, default="Example/1IXCA/1IXCA_pred_full.pdb"
+  --fasta_file             The fasta file of your sequence, default="Example/1IXCA/1IXCA.fasta"
+  --output_dir             The output directory you want to save results, default="./example_output".
   --epochs                 The overfitting iterations, default value: 10000
   --device_id              The GPU id you want to run Distance-AF
   --loose_dist             If loosing the weight of distance_loss near final epochs, default value:0
@@ -95,38 +100,41 @@ required arguments:
 ```
 ### 2. Run Distance-AF with user specified target
 #### 2.1 Prepare Input files
-+ Create a new directory naming in `{pdbid}{chainid}`, like `1IXCA`, all following files are supposed to be in this new created directory.
-+ Target file: text file named in {pdbid}{chainid}, for example: `1IXCA`
++ Target file: text file, for example: `1IXCA`
   - 1IXCA
-+ Fasta file: fasta format file named in `{pdbid}{chainid}.fasta`, for example: `1IXCA.fasta`
++ Fasta file: fasta format file, for example: `1IXCA.fasta`
   -  \>1IXC chain A
 MEFRQLKYFIAVAEAGNMAAAAKRLHVSQPPITRQMQALEADLGVVLLERSHRGIELTAAGHAFLEDARRILELAGRSGDRSRAAARGDVGELSVAYFGTPIYRSLPLLLRAFLTSTPTATVSLTHMTKDEQVEGLLAGTIHVGFSRFFPRHPGIEIVNIAQEDLYLAVHRSQSGKFGKTCKLADLRAVELTLFPRGGRPSFADEVIGLFKHAGIEPRIARVVEDATAALALTMAGAASSIVPASVAAIRWPDIAFARIVGTRVKVPISCIFRKEKQPPILARFVEHVRRSAKD
 
-+ User specified distance constraint file: text format named in `dist_constraint.txt`, we recommend users to specify as many constraints you have to achieve better performance. In the following example, we use 6 pairs of distance constraints.
++ User specified distance constraint file: text format , we recommend users to specify as many constraints you have to achieve better performance. In the following example, we use 6 pairs of distance constraints.
   - `15,221,35.3`: the distance constraint between CA atom of resi 15 and CA atom of resi 221 is 35.3 Å.
   - `17,232,36.9`: the distance constraint between CA atom of resi 17 and CA atom of resi 232 is 36.9 Å.
   - `45,150,34.3`: the distance constraint between CA atom of resi 45 and CA atom of resi 150 is 34.3 Å.
   - `55,190,45.8`: the distance constraint between CA atom of resi 55 and CA atom of resi 190 is 45.8 Å.
   - `65,266,36.0`: the distance constraint between CA atom of resi 65 and CA atom of resi 266 is 36.0 Å.
   - `79,126,22.8`: the distance constraint between CA atom of resi 79 and CA atom of resi 126 is 22.8 Å.
-+ Initial predicted file in PDB with full length: PDB format, named in `{pdbid}{chainid}_pred_full.pdb` for example: `1IXCA_pred_full.pdb`
++ Initial predicted file in PDB with full length: PDB format, for example: `1IXCA_pred_full.pdb`
   - We recommend to use the predicted structure file which violates the given distance constraints as initial structure.
-+ Domain window info file: text format named in `window.txt`. To achieve domain oriented movement.
++ Domain window info file: text format to specify distince domains. To achieve domain oriented movement.
    - 1,87: resi 1 to resi 87 belong to the first domain.
    - 92,294: resi 92 to resi 294 belong to the second domain.
-+ Embedding file: npz format named in `model_1.npz`. The output file after the evoformer layer in [AlphaFold2](https://github.com/google-deepmind/alphafold). We will provide further instructions about how to obtain embedding file.
++ Embedding file: npz format . The output file after the evoformer layer in [AlphaFold2](https://github.com/google-deepmind/alphafold). We will provide further instructions about how to obtain embedding file.
 #### 2.2 Command line
-    python3 main.py [--train_targets=TRAIN_TARGETS] [--output_dir=OUTPUT_DIR] [--msa_transformer_dir=MSA_TRANSFORMER_DIR] [--epochs=EPOCHS] [--device_id=DEVICE_ID]
+    python3 main.py [--target_file=TARGET_FILE] [--emd_file=EMD_FILE] [--dist_info=DIST_INFO] [--window_info=WINDOW_INFO] [--initial_pdb=INITIAL_PDB] [--fasta_file=FASTA_FILE] [--output_dir=OUTPUT_DIR] [--epochs=EPOCHS] [--device_id=DEVICE_ID]
 
-[train_targets] is the path of the target file.  
+[target_file] is the path of the target file.  
+[emd_file] is the embedding file, formatted in npz, for your own target.
+[dist_info] is the text file with the distance constraints you want to applied.
+[window_info] is the text file specifying residues belonging to individual domains.
+[initial_pdb] is the initial structure you want to optimize by Distance-AF.
+[fasta_file] is the fasta file for the target.
 [output_dir] is the parent directory of the output dir you want to save  the results.
-[msa_transformer_dir] is the parent directory of the directory containing input files.  
 [epochs] is the running epochs.  
 [device_id] specifies the gpu used for running Distance-AF.
 [loose_dist] specifies if loosing distance loss weight when distance constraints are roughly satisfied near ending epoch.
 [dist_weight] specifies the weight you want to distance loss, larger value, stricter penalty on distance violation.
 #### 2.3 Example command
 
-    python3 main.py --train_dir=Example/1IXCA/1IXCA --output_dir=./example_output --msa_transformer_dir=Example --epochs=10000 --device_id=1 --loose_dist=1 --dist_weight=0.5
+    python3 main.py --target_file=Example/1IXCA/1IXCA --emd_file=Example/1IXCA/model_1.npz --dist_info=Example/1IXCA/dist_constraint.txt --window_info=Example/1IXCA/window.txt --initial_pdb=Example/1IXCA/1IXCA_pred_full.pdb --fasta_file=Example/1IXCA/1IXCA.fasta --output_dir=./example_output --model_dir=./model_dir --dist_weight=0.5 --loose_dist=1 --device_id=1
 
    
