@@ -82,7 +82,7 @@ conda deactivate(If you want to exit)
 
 ### 1. Command parameters
 ```
-usage: main.py [-h] [--target_file=TARGET_FILE] [--emd_file=EMD_FILE] [--dist_info=DIST_INFO] [--window_info=WINDOW_INFO] [--initial_pdb=INITIAL_PDB] [--fasta_file=FASTA_FILE] [--output_dir=OUTPUT_DIR] [--epochs=EPOCHS] [--device_id=DEVICE_ID]
+usage: main.py [-h] [--target_file=TARGET_FILE] [--emd_file=EMD_FILE] [--dist_info=DIST_INFO] [--window_info=WINDOW_INFO] [--initial_pdb=INITIAL_PDB] [--fasta_file=FASTA_FILE] [--output_dir=OUTPUT_DIR] [--epochs=EPOCHS] [--device_id=DEVICE_ID] [--loose_dist=LOOSE_DIST] [--dist_weight=DIST_WEIGHT]
 
 required arguments:
   -h, --help               show this help message and exit
@@ -120,7 +120,7 @@ MEFRQLKYFIAVAEAGNMAAAAKRLHVSQPPITRQMQALEADLGVVLLERSHRGIELTAAGHAFLEDARRILELAGRSGD
  + 92,294: resi 92 to resi 294 belong to the second domain.
  + Embedding file: npz format . The output file after the evoformer layer in [AlphaFold2](https://github.com/google-deepmind/alphafold). We will provide further instructions about how to obtain embedding file.
 #### 2.2 Command line
-    python3 main.py [--target_file=TARGET_FILE] [--emd_file=EMD_FILE] [--dist_info=DIST_INFO] [--window_info=WINDOW_INFO] [--initial_pdb=INITIAL_PDB] [--fasta_file=FASTA_FILE] [--output_dir=OUTPUT_DIR] [--epochs=EPOCHS] [--device_id=DEVICE_ID]
+    python3 main.py [--target_file=TARGET_FILE] [--emd_file=EMD_FILE] [--dist_info=DIST_INFO] [--window_info=WINDOW_INFO] [--initial_pdb=INITIAL_PDB] [--fasta_file=FASTA_FILE] [--output_dir=OUTPUT_DIR] [--epochs=EPOCHS] [--device_id=DEVICE_ID] [--loose_dist=LOOSE_DIST] [--dist_weight=DIST_WEIGHT]
 
  + [target_file] is the path of the target file.  
  + [emd_file] is the embedding file, formatted in npz, for your own target.  
