@@ -1,5 +1,6 @@
 
 
+
 # Distance-AF
 
 <a href="https://github.com/marktext/marktext/releases/latest">
@@ -118,7 +119,7 @@ MEFRQLKYFIAVAEAGNMAAAAKRLHVSQPPITRQMQALEADLGVVLLERSHRGIELTAAGHAFLEDARRILELAGRSGD
  + Domain window info file: text format to specify distince domains. To achieve domain oriented movement.
  + 1,87: resi 1 to resi 87 belong to the first domain.
  + 92,294: resi 92 to resi 294 belong to the second domain.
- + Embedding file: npz format . The output file after the evoformer layer in [AlphaFold2](https://github.com/google-deepmind/alphafold). We will provide further instructions about how to obtain embedding file.
+ + Embedding file: npz format . The output file after the evoformer layer in [AlphaFold2](https://github.com/google-deepmind/alphafold). We released the google colab version of jupyter file '[Distance_AF_embedding.ipynb](https://github.com/kiharalab/Distance-AF/blob/main/Distance_AF_embedding.ipynb "Distance_AF_embedding.ipynb")' to generate embedding file. Please check [colab_embedding.md](https://github.com/kiharalab/Distance-AF/blob/main/colab_embedding.md) for more information.
 #### 2.2 Command line
     python3 main.py [--target_file=TARGET_FILE] [--emd_file=EMD_FILE] [--dist_info=DIST_INFO] [--window_info=WINDOW_INFO] [--initial_pdb=INITIAL_PDB] [--fasta_file=FASTA_FILE] [--output_dir=OUTPUT_DIR] [--epochs=EPOCHS] [--device_id=DEVICE_ID] [--loose_dist=LOOSE_DIST] [--dist_weight=DIST_WEIGHT]
 
