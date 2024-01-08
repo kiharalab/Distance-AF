@@ -39,7 +39,12 @@ class DistAF_Dataset(Dataset):
         data = {}
         data["target"] = target
         
-        emd = np.load(self.embedding_file)
+        if self.embedding_file.endswith('.npz'):
+            emd = np.load(self.embedding_file)
+        else:
+            import pickle
+            with open(self.embedding_file, 'rb') as f:
+                emd = pickle.load(f)['representations']
         pair = emd['pair']
         single = emd['single']
     
