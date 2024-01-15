@@ -14,6 +14,10 @@ import numpy as np
 import functools
 from utils.set_seed import set_seed
 from train_utils.collate import collate_fn
+import gc
+from torch.cuda.amp import autocast, GradScaler
+from torch.utils.checkpoint import checkpoint as ckpt
+
 def train(args):
     set_seed(args)
     with open(args.target_file, 'r') as f:
@@ -57,7 +61,6 @@ def train(args):
     print("  Batch Size = %d" % (int(args.batch)))
 
     model.train()
-
     #casp_results = test(args, model, test_dataloader)
     #results = val(args, model, val_dataloader)
     gt_keys = ['all_atom_positions', 'all_atom_mask', 'atom14_atom_exists', 'atom14_gt_exists', 'atom14_gt_positions', 
@@ -94,8 +97,11 @@ def train(args):
                 aatype_batch = aatype_batch.to(args.device_id)
                 domain_window = domain_window.to(args.device_id)
                 dist_constraint = dist_constraint.to(args.device_id)
-
-            translation, outputs, pred_frames = model(embedding, single_repr_batch, aatype_batch, batch_gt_frames)
+            dummy = torch.Tensor(1)
+            dummy.requires_grad = True
+            def run_ckpt(model,embedding, single_repr_batch, aatype_batch, batch_gt_frames,dummy):
+                return model(embedding, single_repr_batch, aatype_batch, batch_gt_frames)
+            translation, outputs, pred_frames = ckpt(run_ckpt,model,embedding, single_repr_batch, aatype_batch, batch_gt_frames,dummy)
 
             #compute all needed loss
             bb_loss, dis_loss = backbone_loss(
@@ -107,7 +113,7 @@ def train(args):
             )
 
             rename =compute_renamed_ground_truth(batch_gt, outputs['positions'][-1])
-       
+    
             sc_loss = sidechain_loss_dis(
                 sidechain_frames=outputs['sidechain_frames'],
                 sidechain_atom_pos=outputs['positions'],
@@ -150,13 +156,17 @@ def train(args):
                     fape = 12 * dis_loss * args.dist_weight + (bb_loss+ sc_loss + vio_loss + angle_loss ) * torch.sqrt(min(seq_len, crop_len))
                 else:
                     fape = 48 * dis_loss * args.dist_weight + (bb_loss + sc_loss + vio_loss+ angle_loss ) * torch.sqrt(min(seq_len, crop_len))
-            loss = fape
-            print(f"Epoch:{epoch}, FAPE loss:{loss.item()}")
-            loss.backward()
+            positions = outputs['positions'][-1]
+            del bb_loss, dis_loss, sc_loss, vio_loss, angle_loss, violation_loss_, outputs
+            del pred_frames, translation
+            gc.collect()
+            torch.cuda.empty_cache()
+            print(f"Epoch:{epoch}, FAPE loss:{fape.item()}")
+            fape.backward()
             torch.nn.utils.clip_grad_norm_(model.parameters(), 1)
 
             optimizer.step()
-            #save model checkpoint
+            # save model checkpoint
             if args.val_epochs > 0 and epoch % args.val_epochs == 0 and epoch > 0:
                 epoch_output_dir = os.path.join(target_output_dir, f"checkpoint-{epoch}-{epoch}")
                 if not os.path.exists(epoch_output_dir):
@@ -169,7 +179,7 @@ def train(args):
                 torch.save(model.state_dict(), os.path.join(epoch_output_dir, "model_state_dict.pt"))
                 torch.save(optimizer.state_dict(), os.path.join(epoch_output_dir, "optimizer.pt"))
                 #save predicted pdb for each evaluted epoch
-                final_pos = atom14_to_atom37(outputs['positions'][-1], batch_gt)
+                final_pos = atom14_to_atom37(positions, batch_gt)
                 final_atom_mask = batch_gt["atom37_atom_exists"]
                 initial_pdb = args.initial_pdb
                 with open(initial_pdb,"r") as f:
