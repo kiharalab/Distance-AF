@@ -35,7 +35,7 @@ def argparser():
     parser.add_argument("--angle_loss", type=int, default=1)
     parser.add_argument("--dist_weight", type=float, default=0.5, help='adjustable for weight of distance loss')
     parser.add_argument("--loose_dist",type=int, default=1, help="if loose the weight of distance loss when it is smaller than 1")
-
+    parser.add_argument("--use_checkpoint",type=int, default=1, help="if using torch checkpoint to save GPU RAM")
     args = parser.parse_args()
     os.environ['CUDA_VISIBLE_DEVICES'] = str(args.device_id)
     args.device_id = torch.device("cuda" if torch.cuda.is_available() else "cpu")

@@ -99,9 +99,12 @@ def train(args):
                 dist_constraint = dist_constraint.to(args.device_id)
             dummy = torch.Tensor(1)
             dummy.requires_grad = True
-            def run_ckpt(model,embedding, single_repr_batch, aatype_batch, batch_gt_frames,dummy):
-                return model(embedding, single_repr_batch, aatype_batch, batch_gt_frames)
-            translation, outputs, pred_frames = ckpt(run_ckpt,model,embedding, single_repr_batch, aatype_batch, batch_gt_frames,dummy)
+            if args.use_checkpoint:
+                def run_ckpt(model,embedding, single_repr_batch, aatype_batch, batch_gt_frames,dummy):
+                    return model(embedding, single_repr_batch, aatype_batch, batch_gt_frames)
+                translation, outputs, pred_frames = ckpt(run_ckpt,model,embedding, single_repr_batch, aatype_batch, batch_gt_frames,dummy)
+            else:
+                translation, outputs, pred_frames = model(embedding, single_repr_batch, aatype_batch, batch_gt_frames)
 
             #compute all needed loss
             bb_loss, dis_loss = backbone_loss(
