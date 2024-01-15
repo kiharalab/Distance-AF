@@ -24,7 +24,7 @@ from train_utils.tensor_utils import (
     permute_final_dims,
     flatten_final_dims,
 )
-
+from torch.utils.checkpoint import checkpoint
 from protein_utils.residue_constants import (
     restype_rigid_group_default_frame,
     restype_atom14_to_rigid_group,
@@ -592,7 +592,6 @@ class StructureModule(nn.Module):
             self.no_angles,
             self.epsilon,
         )
-        
     def forward(
         self,
         s,
