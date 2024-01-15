@@ -19,5 +19,6 @@ class Dist_AF_IPA(nn.Module):
         pred_frames = torch.stack(output_bb)
         lddt = self.plddt(outputs['single'])
         experimentally_resolved_logits = self.experimentally_resolved(outputs['single'])
+        del lddt, experimentally_resolved_logits
         return translation, outputs, pred_frames
 
