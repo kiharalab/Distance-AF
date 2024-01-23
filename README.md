@@ -119,7 +119,8 @@ MEFRQLKYFIAVAEAGNMAAAAKRLHVSQPPITRQMQALEADLGVVLLERSHRGIELTAAGHAFLEDARRILELAGRSGD
  + Domain window info file: text format to specify distince domains. To achieve domain oriented movement.
  + 1,87: resi 1 to resi 87 belong to the first domain.
  + 92,294: resi 92 to resi 294 belong to the second domain.
- + Embedding file: npz format . The output file after the evoformer layer in [AlphaFold2](https://github.com/google-deepmind/alphafold). We released the google colab version of jupyter file '[Distance_AF_embedding.ipynb](https://github.com/kiharalab/Distance-AF/blob/main/Distance_AF_embedding.ipynb "Distance_AF_embedding.ipynb")' to generate embedding file. Please check [colab_embedding.md](https://github.com/kiharalab/Distance-AF/blob/main/colab_embedding.md) for more information.
+ + Embedding file: npz format . The output file after the evoformer layer in [AlphaFold2](https://github.com/google-deepmind/alphafold). ~~We released the google colab version of jupyter file '[Distance_AF_embedding.ipynb](https://github.com/kiharalab/Distance-AF/blob/main/Distance_AF_embedding.ipynb "Distance_AF_embedding.ipynb")' to generate embedding file. Please check [colab_embedding.md](https://github.com/kiharalab/Distance-AF/blob/main/colab_embedding.md) for more information.~~ 
+ + **Updates about Colab for generating embedding file**: Currently due to some errors about google colab runtime changes, the [Distance_AF_embedding.ipynb](https://github.com/kiharalab/Distance-AF/blob/main/Distance_AF_embedding.ipynb "Distance_AF_embedding.ipynb") is not working, it will be available again after AlphaFold2 team fix the problem([issue here](https://github.com/google-deepmind/alphafold/issues/875)). Please use [Distance_AF_embedding_v2.ipynb](https://github.com/kiharalab/Distance-AF/blob/main/Distance_AF_embedding_v2.ipynb) to generate embeddings, this script is based on [ColabFold using MMseq](https://colab.research.google.com/github/sokrypton/ColabFold/blob/main/AlphaFold2.ipynb). The new colab sciprt will run MMseq for MSA search, which may produce different results compared to vanilla AlphaFold2.
 #### 2.2 Command line
     python3 main.py [--target_file=TARGET_FILE] [--emd_file=EMD_FILE] [--dist_info=DIST_INFO] [--window_info=WINDOW_INFO] [--initial_pdb=INITIAL_PDB] [--fasta_file=FASTA_FILE] [--output_dir=OUTPUT_DIR] [--epochs=EPOCHS] [--device_id=DEVICE_ID] [--loose_dist=LOOSE_DIST] [--dist_weight=DIST_WEIGHT]
 
@@ -137,5 +138,5 @@ MEFRQLKYFIAVAEAGNMAAAAKRLHVSQPPITRQMQALEADLGVVLLERSHRGIELTAAGHAFLEDARRILELAGRSGD
 #### 2.3 Example command
 
     python3 main.py --target_file=Example/1IXCA/1IXCA --emd_file=Example/1IXCA/model_1.npz --dist_info=Example/1IXCA/dist_constraint.txt --window_info=Example/1IXCA/window.txt --initial_pdb=Example/1IXCA/1IXCA_pred_full.pdb --fasta_file=Example/1IXCA/1IXCA.fasta --output_dir=./example_output --model_dir=./model_dir --dist_weight=0.5 --loose_dist=1 --device_id=1
-
-   
+### 3. Result check
+The predicted structure by Distance-AF will be saved at `--output_dir`, you can specify any local path you'd like. The intermediate structures will also be stored every 100 epochs in each corresponding subdirectories like `**checkpoint-100-100**` or so.
