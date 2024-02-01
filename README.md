@@ -1,6 +1,7 @@
 
 
 
+
 # Distance-AF
 
 <a href="https://github.com/marktext/marktext/releases/latest">
@@ -120,7 +121,8 @@ MEFRQLKYFIAVAEAGNMAAAAKRLHVSQPPITRQMQALEADLGVVLLERSHRGIELTAAGHAFLEDARRILELAGRSGD
  + 1,87: resi 1 to resi 87 belong to the first domain.
  + 92,294: resi 92 to resi 294 belong to the second domain.
  + Embedding file: npz format . The output file after the evoformer layer in [AlphaFold2](https://github.com/google-deepmind/alphafold). ~~We released the google colab version of jupyter file '[Distance_AF_embedding.ipynb](https://github.com/kiharalab/Distance-AF/blob/main/Distance_AF_embedding.ipynb "Distance_AF_embedding.ipynb")' to generate embedding file. Please check [colab_embedding.md](https://github.com/kiharalab/Distance-AF/blob/main/colab_embedding.md) for more information.~~ 
- + **Updates about Colab for generating embedding file**: Currently due to some errors about google colab runtime changes, the [Distance_AF_embedding.ipynb](https://github.com/kiharalab/Distance-AF/blob/main/Distance_AF_embedding.ipynb "Distance_AF_embedding.ipynb") is not working, it will be available again after AlphaFold2 team fix the problem([issue here](https://github.com/google-deepmind/alphafold/issues/875)). Please use [Distance_AF_embedding_v2.ipynb](https://github.com/kiharalab/Distance-AF/blob/main/Distance_AF_embedding_v2.ipynb) to generate embeddings, this script is based on [ColabFold using MMseq](https://colab.research.google.com/github/sokrypton/ColabFold/blob/main/AlphaFold2.ipynb). The new colab sciprt will run MMseq for MSA search, which may produce different results compared to vanilla AlphaFold2.
+ + ~~**Updates about Colab for generating embedding file**: Currently due to some errors about google colab runtime changes, the [Distance_AF_embedding.ipynb](https://github.com/kiharalab/Distance-AF/blob/main/Distance_AF_embedding.ipynb "Distance_AF_embedding.ipynb") is not working, it will be available again after AlphaFold2 team fix the problem([issue here](https://github.com/google-deepmind/alphafold/issues/875)). Please use [Distance_AF_embedding_v2.ipynb](https://github.com/kiharalab/Distance-AF/blob/main/Distance_AF_embedding_v2.ipynb) to generate embeddings, this script is based on [ColabFold using MMseq](https://colab.research.google.com/github/sokrypton/ColabFold/blob/main/AlphaFold2.ipynb). The new colab sciprt will run MMseq for MSA search, which may produce different results compared to vanilla AlphaFold2.~~
+ + **Updates about Colab for embedding generation**: Currently the bug in [Distance_AF_embedding_FullMSA.ipynb](https://github.com/kiharalab/Distance-AF/blob/main/Distance_AF_embedding_FullMSA.ipynb) has been fixed and is runnable to get embeddings. Thanks to the efforts from everyone in [issue 875](https://github.com/google-deepmind/alphafold/issues/875). Meanwhile, I kept the mmseq version of colab [Distance_AF_embedding_MMseq.ipynb](https://github.com/kiharalab/Distance-AF/blob/main/Distance_AF_embedding_MMseq.ipynb). Compared to Full MSA version, it is faster but sometimes the quality of MSAs are not so good. Therefore, [Distance_AF_embedding_FullMSA.ipynb](https://github.com/kiharalab/Distance-AF/blob/main/Distance_AF_embedding_FullMSA.ipynb)  is still recommended.
 #### 2.2 Command line
     python3 main.py [--target_file=TARGET_FILE] [--emd_file=EMD_FILE] [--dist_info=DIST_INFO] [--window_info=WINDOW_INFO] [--initial_pdb=INITIAL_PDB] [--fasta_file=FASTA_FILE] [--output_dir=OUTPUT_DIR] [--epochs=EPOCHS] [--device_id=DEVICE_ID] [--loose_dist=LOOSE_DIST] [--dist_weight=DIST_WEIGHT]
 
