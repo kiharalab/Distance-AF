@@ -84,7 +84,7 @@ conda deactivate(If you want to exit)
 
 ### 1. Command parameters
 ```
-usage: main.py [-h] [--target_file=TARGET_FILE] [--emd_file=EMD_FILE] [--dist_info=DIST_INFO] [--window_info=WINDOW_INFO] [--initial_pdb=INITIAL_PDB] [--fasta_file=FASTA_FILE] [--output_dir=OUTPUT_DIR] [--epochs=EPOCHS] [--device_id=DEVICE_ID] [--loose_dist=LOOSE_DIST] [--dist_weight=DIST_WEIGHT]
+usage: Distance_AF.py [-h] [--target_file=TARGET_FILE] [--emd_file=EMD_FILE] [--dist_info=DIST_INFO] [--window_info=WINDOW_INFO] [--initial_pdb=INITIAL_PDB] [--fasta_file=FASTA_FILE] [--output_dir=OUTPUT_DIR] [--epochs=EPOCHS] [--device_id=DEVICE_ID] [--loose_dist=LOOSE_DIST] [--dist_weight=DIST_WEIGHT]
 
 required arguments:
   -h, --help               show this help message and exit
@@ -124,7 +124,7 @@ MEFRQLKYFIAVAEAGNMAAAAKRLHVSQPPITRQMQALEADLGVVLLERSHRGIELTAAGHAFLEDARRILELAGRSGD
  + ~~**Updates about Colab for generating embedding file**: Currently due to some errors about google colab runtime changes, the [Distance_AF_embedding.ipynb](https://github.com/kiharalab/Distance-AF/blob/main/Distance_AF_embedding.ipynb "Distance_AF_embedding.ipynb") is not working, it will be available again after AlphaFold2 team fix the problem([issue here](https://github.com/google-deepmind/alphafold/issues/875)). Please use [Distance_AF_embedding_v2.ipynb](https://github.com/kiharalab/Distance-AF/blob/main/Distance_AF_embedding_v2.ipynb) to generate embeddings, this script is based on [ColabFold using MMseq](https://colab.research.google.com/github/sokrypton/ColabFold/blob/main/AlphaFold2.ipynb). The new colab sciprt will run MMseq for MSA search, which may produce different results compared to vanilla AlphaFold2.~~
  + **Updates about Colab for embedding generation**: Currently the bug in [Distance_AF_embedding_FullMSA.ipynb](https://github.com/kiharalab/Distance-AF/blob/main/Distance_AF_embedding_FullMSA.ipynb) has been fixed and is runnable to get embeddings. Thanks to the efforts from everyone in [issue 875](https://github.com/google-deepmind/alphafold/issues/875). Meanwhile, I kept the mmseq version of colab [Distance_AF_embedding_MMseq.ipynb](https://github.com/kiharalab/Distance-AF/blob/main/Distance_AF_embedding_MMseq.ipynb). Compared to Full MSA version, it is faster but sometimes the quality of MSAs are not so good. Therefore, [Distance_AF_embedding_FullMSA.ipynb](https://github.com/kiharalab/Distance-AF/blob/main/Distance_AF_embedding_FullMSA.ipynb)  is still recommended.
 #### 2.2 Command line
-    python3 main.py [--target_file=TARGET_FILE] [--emd_file=EMD_FILE] [--dist_info=DIST_INFO] [--window_info=WINDOW_INFO] [--initial_pdb=INITIAL_PDB] [--fasta_file=FASTA_FILE] [--output_dir=OUTPUT_DIR] [--epochs=EPOCHS] [--device_id=DEVICE_ID] [--loose_dist=LOOSE_DIST] [--dist_weight=DIST_WEIGHT]
+    python3 Distance_AF.py [--target_file=TARGET_FILE] [--emd_file=EMD_FILE] [--dist_info=DIST_INFO] [--window_info=WINDOW_INFO] [--initial_pdb=INITIAL_PDB] [--fasta_file=FASTA_FILE] [--output_dir=OUTPUT_DIR] [--epochs=EPOCHS] [--device_id=DEVICE_ID] [--loose_dist=LOOSE_DIST] [--dist_weight=DIST_WEIGHT]
 
  + [target_file] is the path of the target file.  
  + [emd_file] is the embedding file, formatted in npz, for your own target.  
@@ -139,6 +139,6 @@ MEFRQLKYFIAVAEAGNMAAAAKRLHVSQPPITRQMQALEADLGVVLLERSHRGIELTAAGHAFLEDARRILELAGRSGD
  + [dist_weight] specifies the weight you want to distance loss, larger value, stricter penalty on distance violation.  
 #### 2.3 Example command
 
-    python3 main.py --target_file=Example/1IXCA/1IXCA --emd_file=Example/1IXCA/model_1.npz --dist_info=Example/1IXCA/dist_constraint.txt --window_info=Example/1IXCA/window.txt --initial_pdb=Example/1IXCA/1IXCA_pred_full.pdb --fasta_file=Example/1IXCA/1IXCA.fasta --output_dir=./example_output --model_dir=./model_dir --dist_weight=0.5 --loose_dist=1 --device_id=1
+    python3 Distance_AF.py --target_file=Example/1IXCA/1IXCA --emd_file=Example/1IXCA/model_1.npz --dist_info=Example/1IXCA/dist_constraint.txt --window_info=Example/1IXCA/window.txt --initial_pdb=Example/1IXCA/1IXCA_pred_full.pdb --fasta_file=Example/1IXCA/1IXCA.fasta --output_dir=./example_output --model_dir=./model_dir --dist_weight=0.5 --loose_dist=1 --device_id=1
 ### 3. Result check
 The predicted structure by Distance-AF will be saved at `--output_dir`, you can specify any local path you'd like. The intermediate structures will also be stored every 100 epochs in each corresponding subdirectories like `**checkpoint-100-100**` or so.
